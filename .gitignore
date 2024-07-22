@@ -1,0 +1,22 @@
+.gradle/
+.vscode/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+Brewfile.lock.json
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+.DS_Store
+.java-version
+skaffold.yaml
+out/
+target/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+git.properties
