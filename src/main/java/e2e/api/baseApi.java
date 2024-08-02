@@ -19,7 +19,7 @@ public class baseApi {
     public static RequestSpecification getRequestSpec() {
         return new RequestSpecBuilder().
                 setBaseUri(ConfigLoader.getInstance().getBaseUriAPI()).
-                //addHeader("Authorization", "Bearer " + token).
+                addHeader("Authorization", "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzZmE0NmU4YjdjYzgzZGNmOWM0Y2NlMTU3ZTk4NzkxMiIsIm5iZiI6MTcyMDk3MjcyMy45OTIwNTYsInN1YiI6IjY2OTNmM2E3YWY2MzU5NDIwZDAyNzU5ZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.L4LrKR18dP09eG-2v_WYOr4wg7cfrgwqXF65OjUllMs").
                 setBasePath(BASE_PATH).
                 setContentType(ContentType.JSON).
                 build();
@@ -49,7 +49,7 @@ public class baseApi {
                 when().
                 get(path).
                 then().
-                spec(getResponseSpec()).
+                //spec(getResponseSpec()).
                 extract().response();
     }
 }

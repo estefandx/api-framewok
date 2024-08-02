@@ -6,6 +6,7 @@ import e2e.api.enums.EnvType;
 public class ConfigLoader {
 
     private static final String BASE_URI_API = "base_uri_api";
+    private static final String ACCOUNT_ID = "account_id";
     private static final String RETRY_FAILED_TESTS = "retry_failed_tests";
 
     private static final String ENV = "env";
@@ -67,6 +68,10 @@ public class ConfigLoader {
 
     public String getBaseUriAPI() {
         return getPropertyValue(BASE_URI_API);
+    }
+
+    public String getAccountId() {
+        return getPropertyValue(ACCOUNT_ID);
     }
 
     public String getRetryFailedTests() {
