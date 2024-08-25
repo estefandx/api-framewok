@@ -11,6 +11,8 @@ import io.restassured.specification.RequestSpecification;
 
 import io.restassured.specification.ResponseSpecification;
 
+import java.util.Map;
+
 import static e2e.api.enums.Route.BASE_PATH;
 import static io.restassured.RestAssured.given;
 
@@ -50,6 +52,15 @@ public class baseApi {
                 get(path).
                 then().
                 //spec(getResponseSpec()).
+                extract().response();
+    }
+
+    public static Response get(String path, Map<String, String> queryParams) {
+        return given(getRequestSpec())
+                .queryParams(queryParams)
+                .get(path)
+                .then().
+                spec(getResponseSpec()).
                 extract().response();
     }
 }
