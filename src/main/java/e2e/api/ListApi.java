@@ -1,5 +1,6 @@
 package e2e.api;
 
+import e2e.api.enums.Route;
 import io.restassured.response.Response;
 
 import java.util.Map;
@@ -16,13 +17,12 @@ public class ListApi extends  baseApi {
     }
 
     public static Response getMoviExistList (String idList, Map<String, String> queryParams){
-        String path = XREF_MOVIE_EXIST_LIST.replace("{list_id}", idList);
+        String path = String.format(Route.XREF_MOVIE_EXIST_LIST, idList);
         return get(path, queryParams);
     }
 
     public static Response addItemToList(String listId, Object payLoad) {
-
-        String path = XREF_ADD_ITEM_TO_LIST.replace("{list_id}", listId);
+        String path = String.format(Route.XREF_ADD_ITEM_TO_LIST, listId);
         return post(path, payLoad);
     }
 

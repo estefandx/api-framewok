@@ -3,20 +3,24 @@ package e2e.stepDefinitions;
 import e2e.api.AccountApi;
 import e2e.api.ListApi;
 import e2e.api.SearchApi;
+import e2e.pojos.request.CreateListPayload;
+import e2e.pojos.request.MovieSearchParams;
+import e2e.pojos.request.moviSearch.Movie;
+import e2e.pojos.request.moviSearch.MovieSearchResponse;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import net.bytebuddy.implementation.bytecode.Throw;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import org.slf4j.Logger;
 
 
 public class MoviesSteps {
@@ -24,9 +28,11 @@ public class MoviesSteps {
     List<String> listIdMovies = new ArrayList<>();
     String idList = "8311527";
     Integer idMovie;
+    private static final Logger logger = LoggerFactory.getLogger(MoviesSteps.class);
 
     @When("I query the {int} top movies")
     public void iQueryTopMovies(int numTopMovies) {
+        logger.info("Iniciando la prueba de API...");
         response = AccountApi.getRatedMovies();
         JsonPath jsonPath = response.jsonPath();
         List<Map<String, Object>> movies = jsonPath.getList("results");
@@ -65,47 +71,45 @@ public class MoviesSteps {
         Map<String, String> firstDataRow = moviesList.get(0);
 
 
-        String name = firstDataRow.get("name");
-        String description = firstDataRow.get("description");
-        String language = firstDataRow.get("language");
+        CreateListPayload payload = CreateListPayload.builder()
+                .name(firstDataRow.get("name"))
+                .description(firstDataRow.get("description"))
+                .language(firstDataRow.get("language"))
+                .build();
 
-        Map<String, Object> payload = Map.of(
-                "name", name ,
-                "description", description,
-                "language", language
-        );
+
         response = ListApi.postCreateList(payload);
         response.then().statusCode(201);
         idList = response.jsonPath().getString("list_id");
-        System.out.println("value id" + idList);
-
-
+        logger.info("value id{}", idList);
     }
 
     @When("I search for a movie by name {string} of the year {string}")
     public void i_search_for_a_movie_by_name_of_the_year(String name, String year) {
-        Map<String, String> queryParams = new HashMap<>();
-        queryParams.put("query", name);
-        queryParams.put("page", "1");
-        queryParams.put("year",year);
+        MovieSearchParams searchParams = MovieSearchParams.builder()
+                .query(name)
+                .year(year)
+                .page(1)
+                .build();
+        Map<String, String> queryParams = searchParams.toMap();
         response = SearchApi.getSearchMovie(queryParams);
 
-        List<Map<String, ?>> results = response.jsonPath().getList("results");
 
+        MovieSearchResponse searchResponse = response.as(MovieSearchResponse.class);
 
-        Map<String, ?> movie = results.stream()
-                .filter(m -> name.equals(m.get("title")))
+        List<Movie> results = searchResponse.getResults();
+        Movie movie = results.stream()
+                .filter(m -> name.equals(m.getTitle()))
                 .findFirst()
                 .orElse(null);
 
         if (movie != null) {
+            idMovie = movie.getId();
 
-            idMovie = (Integer) movie.get("id");
+            logger.info("Response id movie : {}", idMovie);
 
-
-            System.out.println("Rid movie : " + idMovie);
         } else {
-            System.out.println("Movie with title \"" + name + "\" not found.");
+            logger.info("Movie with title \"{}\" not found.", name);
         }
 
 
